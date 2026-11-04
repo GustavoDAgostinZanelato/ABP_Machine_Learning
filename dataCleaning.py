@@ -7,7 +7,7 @@ from sklearn.pipeline import Pipeline
 from sklearn.impute import SimpleImputer
 from sklearn.preprocessing import StandardScaler
 
-df_raw = pd.read_csv('.docs/group_10_winequality.csv', sep=';')
+df_raw = pd.read_csv('.docs/group_10_winequality.csv', sep=',')
 df = df_raw.copy()
 print(df.shape)
 df.info()
@@ -63,7 +63,11 @@ df = df[df['quality'].between(0, 10)]   # garantia extra contra o 230
 df = df.drop_duplicates().reset_index(drop=True)
 print(df.shape, df.isna().sum()[lambda s: s > 0].to_dict())
 
-df['type'] = df['type'].replace({'red': 0, 'white': 1}).astype(int)
+
+df = df[df['type'].isin(['red', 'white'])].copy()
+
+# Codifica as categorias
+df['type'] = df['type'].map({'red': 0, 'white': 1}).astype(int)
 
 # Validação antes de salvar
 assert df['type'].isin([0, 1]).all()
