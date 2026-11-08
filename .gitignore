@@ -1,3 +1,8 @@
 .venv
 /.venv
 \.venv
+
+.docs/wine_treino.csv
+.docs/wine_teste.csv
+
+__pycache__
