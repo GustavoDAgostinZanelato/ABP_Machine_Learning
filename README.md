@@ -152,6 +152,27 @@ deactivate
     (modelos de árvore), indicando quais mais impactam a qualidade.
 20. Comparar os resultados antes e depois do tuning.
 
+#### Como executar a Parte 1
+
+Com o ambiente virtual ativo e a partir da raiz do projeto:
+
+```bash
+python regressao.py
+```
+
+O script reaproveita a limpeza do `limpezaDados.py`, treina Ridge, Random Forest e
+Gradient Boosting com validação cruzada 5-fold, afina os hiperparâmetros com
+`GridSearchCV` (critério: RMSE) e gera:
+
+| Arquivo                          | Conteúdo                                                    |
+|----------------------------------|-------------------------------------------------------------|
+| `figures/07_comparacao_modelos.png` | RMSE, MAE e R² em validação cruzada e no teste, por modelo |
+| `figures/08_importancia_features.png` | Coeficientes do Ridge e importância das variáveis nas árvores |
+| `results/regressao.csv`          | Métricas de cada modelo antes e depois do tuning            |
+| `results/regressao.md`           | Resumo com tabelas e conclusões, pronto para o relatório    |
+
+Tempo de execução: cerca de 1 a 2 minutos.
+
 ### Etapa 4 — Parte 2: Classificação
 
 21. Criar a variável alvo categórica por discretização de `quality`.
