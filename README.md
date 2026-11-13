@@ -13,8 +13,13 @@ ABP_Machine_Learning/
 ├── .docs/                          # Dados e enunciado (não versionados pelo conteúdo)
 │   ├── DescricaoTrabalhoFinal.pdf  # Enunciado do trabalho
 │   ├── group_10_winequality.csv    # Dataset original (com ruído/sujo)
-│   └── wine_limpo2.csv             # Dataset limpo gerado pelo dataCleaning.py
-├── dataCleaning.py                 # Etapa 1: limpeza e pré-processamento
+│   └── wine_limpo.csv              # Dataset limpo gerado pelo limpezaDados.py
+├── limpezaDados.py                 # Etapa 1: limpeza e pré-processamento
+├── analiseExploratoria.py          # Etapa 2: análise exploratória
+├── regressao.py                    # Parte 1: regressão
+├── classificacao.py                # Parte 2: classificação
+├── figures/                        # Gráficos gerados pelos scripts
+├── results/                        # Resultados e resumos em CSV/Markdown
 ├── requirements.txt                # Dependências do projeto
 ├── .gitignore
 └── README.md
@@ -90,11 +95,11 @@ Se aparecer `Dependências OK`, o ambiente está pronto.
 
 ### 6. Executar o pré-processamento
 
-O script `dataCleaning.py` lê o dataset original em `.docs/group_10_winequality.csv`,
-aplica a limpeza/normalização e salva o resultado em `.docs/wine_limpo2.csv`.
+O script `limpezaDados.py` lê o dataset original em `.docs/group_10_winequality.csv`,
+aplica a limpeza/normalização e salva o resultado em `.docs/wine_limpo.csv`.
 
 ```bash
-python dataCleaning.py
+python limpezaDados.py
 ```
 
 ### 7. Desativar o ambiente (quando terminar)
@@ -175,16 +180,17 @@ Tempo de execução: cerca de 1 a 2 minutos.
 
 ### Etapa 4 — Parte 2: Classificação
 
-21. Criar a variável alvo categórica por discretização de `quality`.
-22. Testar diferentes ranges (exigência explícita), por exemplo 2 classes
-    (≤5 vs ≥6) e 3 classes (≤5, 6, ≥7). Comparar e justificar o escolhido.
-23. Verificar a distribuição das classes e justificar o balanceamento
-    (`class_weight`, SMOTE ou under/oversampling), aplicado só no treino.
-24. Codificar os rótulos (`LabelEncoder` ou `OneHotEncoder`, se necessário).
-25. Treinar pelo menos 3 classificadores (por exemplo Regressão Logística,
-    Random Forest e SVM ou Gradient Boosting).
-26. Escolher e justificar a métrica (**F1-macro** ou **balanced accuracy**,
-    por causa do desbalanceamento).
-27. Fazer o ajuste de hiperparâmetros com `GridSearchCV` e `StratifiedKFold`.
-28. Analisar os erros com a **matriz de confusão**: quais classes se confundem,
-    qual modelo foi melhor e quais features foram decisivas.
+`classificacao.py` completa a Parte 2: compara duas e três faixas de `quality`,
+seleciona três classes (0-5, 6 e 7-10), faz divisão estratificada e treina
+Regressão Logística, Random Forest e SVM com pesos balanceados. Os modelos são
+comparados por F1-macro e balanced accuracy, ajustados com `GridSearchCV` e
+`StratifiedKFold` de 5 folds, e analisados por matriz de confusão e importância
+de variáveis por permutação.
+
+```bash
+python classificacao.py
+```
+
+O script gera `results/classificacao.md`, CSVs com distribuição, métricas e
+importância, além de figuras para distribuição, comparação dos modelos, matrizes
+de confusão e variáveis relevantes (`figures/09` a `figures/13`).
