@@ -10,16 +10,21 @@ e classificação.
 
 ```
 ABP_Machine_Learning/
-├── .docs/                          # Dados e enunciado (não versionados pelo conteúdo)
+├── .docs/                          # Dados e enunciado
 │   ├── DescricaoTrabalhoFinal.pdf  # Enunciado do trabalho
-│   ├── group_10_winequality.csv    # Dataset original (com ruído/sujo)
-│   └── wine_limpo.csv              # Dataset limpo gerado pelo limpezaDados.py
+│   ├── Dataset dos Grupos/         # Datasets de todos os grupos (fornecidos pelo professor)
+│   ├── group_10_winequality.csv    # Dataset original do grupo (com ruído/sujo)
+│   ├── wine_limpo.csv              # Dataset limpo gerado pelo limpezaDados.py
+│   └── wine_treino.csv / wine_teste.csv  # Divisão treino/teste (gerada localmente, no .gitignore)
 ├── limpezaDados.py                 # Etapa 1: limpeza e pré-processamento
 ├── analiseExploratoria.py          # Etapa 2: análise exploratória
 ├── regressao.py                    # Parte 1: regressão
 ├── classificacao.py                # Parte 2: classificação
-├── figures/                        # Gráficos gerados pelos scripts
+├── figures/                        # Gráficos gerados pelos scripts (01 a 13)
 ├── results/                        # Resultados e resumos em CSV/Markdown
+│   ├── regressao.csv / .md         # Parte 1
+│   ├── classificacao*.csv / .md    # Parte 2
+│   └── validacao_distribuicoes_eda.csv  # Comparação do dado limpo com o Wine Quality original
 ├── requirements.txt                # Dependências do projeto
 ├── .gitignore
 └── README.md
@@ -96,11 +101,21 @@ Se aparecer `Dependências OK`, o ambiente está pronto.
 ### 6. Executar o pré-processamento
 
 O script `limpezaDados.py` lê o dataset original em `.docs/group_10_winequality.csv`,
-aplica a limpeza/normalização e salva o resultado em `.docs/wine_limpo.csv`.
+aplica a limpeza/normalização e salva o resultado em `.docs/wine_limpo.csv`
+(além de `.docs/wine_treino.csv` e `.docs/wine_teste.csv`).
 
 ```bash
 python limpezaDados.py
 ```
+
+Para gerar a análise exploratória (figuras `01` a `06`):
+
+```bash
+python analiseExploratoria.py
+```
+
+> Os scripts `regressao.py` e `classificacao.py` chamam a limpeza por conta
+> própria, então podem ser executados diretamente.
 
 ### 7. Desativar o ambiente (quando terminar)
 

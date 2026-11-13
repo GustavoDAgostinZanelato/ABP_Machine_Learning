@@ -221,6 +221,7 @@ def plotar_metricas(tabela, caminho):
 def plotar_matrizes_confusao(matrizes, nomes_classes, caminho):
     """Plota as matrizes de confusão normalizadas por classe real."""
     fig, axes = plt.subplots(1, len(matrizes), figsize=(15, 4.5))
+    cax = fig.add_axes([0.92, 0.22, 0.015, 0.6])   # eixo próprio: a barra não cobre nenhuma matriz
     for ax, (nome, matriz) in zip(axes, matrizes.items()):
         normalizada = matriz / matriz.sum(axis=1, keepdims=True)
         imagem = ax.imshow(normalizada, cmap='Blues', vmin=0, vmax=1)
@@ -242,7 +243,7 @@ def plotar_matrizes_confusao(matrizes, nomes_classes, caminho):
                     color='white' if normalizada[linha, coluna] > 0.5 else 'black',
                     fontsize=8,
                 )
-    fig.colorbar(imagem, ax=axes, label='Proporção por classe real', shrink=0.8)
+    fig.colorbar(imagem, cax=cax, label='Proporção por classe real')
     fig.suptitle('Matrizes de confusão no conjunto de teste (contagem e proporção)')
     fig.subplots_adjust(left=0.06, right=0.9, bottom=0.22, top=0.82, wspace=0.55)
     fig.savefig(caminho, dpi=120)
@@ -300,11 +301,16 @@ def _resumo_markdown(tabela_faixas, distribuicao_treino, distribuicao_teste,
         )
     linhas += [
         '',
-        'Foi escolhida a discretização em três classes (quality 0-5, 6 e 7-10), '
-        f'conforme a proposta do projeto. A razao entre a maior e a menor classe '
-        f'é {razao_3:.2f}:1, contra {razao_2:.2f}:1 na opção binária. '
-        'A opção de três classes preserva a categoria intermediária e mantém '
-        'amostras suficientes em todas as classes para uma divisão estratificada.',
+        'Foi escolhida a discretização em três classes (quality 0-5, 6 e 7-10). '
+        'A nota 6 é a moda do dataset e concentra a maior parte dos vinhos, então '
+        'tratá-la como classe própria evita misturar vinhos medianos com os de '
+        'qualidade baixa ou alta. '
+        f'A razão entre a maior e a menor classe é {razao_3:.2f}:1, contra '
+        f'{razao_2:.2f}:1 na opção binária: o desbalanceamento é maior, mas '
+        'moderado, e todas as classes mantêm amostras suficientes para uma divisão '
+        'estratificada. O desbalanceamento é tratado com `class_weight="balanced"` '
+        'em vez de reamostragem, que preserva todos os dados reais e evita '
+        'vazamento na validação cruzada.',
         '',
         '## Etapa 2 - Preparação dos dados',
         '',
@@ -461,8 +467,10 @@ def main(verbose=True, salvar=True):
 
     alvo_texto = discretizar(quality, FAIXA_ESCOLHIDA)
     codificador = LabelEncoder()
+    # classes_ na ordem natural (Baixa < Média < Alta); o fit alfabético a embaralharia
+    codificador.classes_ = np.array(FAIXAS[FAIXA_ESCOLHIDA]['labels'])
     alvo = pd.Series(
-        codificador.fit_transform(alvo_texto),
+        codificador.transform(alvo_texto.astype(str)),
         index=alvo_texto.index,
         name='classe',
     )

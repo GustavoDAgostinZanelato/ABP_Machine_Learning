@@ -5,6 +5,7 @@ import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import seaborn as sns
+from matplotlib.ticker import LogFormatterMathtext, LogLocator, NullFormatter
 
 os.makedirs('figures', exist_ok=True)
 
@@ -12,7 +13,7 @@ os.makedirs('figures', exist_ok=True)
 raw = pd.read_csv('.docs/group_10_winequality.csv', sep=',')
 raw['alcohol'] = pd.to_numeric(raw['alcohol'], errors='coerce')
 # Depois: saída do dataCleaning.py
-clean = pd.read_csv('.docs/wine_limpo2.csv')
+clean = pd.read_csv('.docs/wine_limpo.csv')
 
 FEATURES = [c for c in clean.columns if c not in ('type', 'quality')]
 
@@ -23,6 +24,11 @@ def histogramas(df, titulo, arquivo, log=False):
         sns.histplot(df[col].dropna(), bins=40, ax=ax, log_scale=log and col != 'quality')
         ax.set_title(col)
         ax.set_xlabel('')
+        if log and col != 'quality':
+            # só potências de 10 rotuladas, sem os rótulos menores sobrepostos
+            ax.xaxis.set_major_locator(LogLocator(base=10, numticks=8))
+            ax.xaxis.set_major_formatter(LogFormatterMathtext())
+            ax.xaxis.set_minor_formatter(NullFormatter())
     for ax in axes.flat[len(FEATURES) + 1:]:
         ax.axis('off')
     fig.suptitle(titulo)
